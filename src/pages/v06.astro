@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import { services } from '../data/services';
+
+const live = services
+  .filter((s) => s.status === 'live' || s.status === 'forthcoming')
+  .sort((a, b) => a.order - b.order);
+---
+<Base title="06 — Numbered — corbet.ch" bodyClass="font-sans">
+  <main class="min-h-screen flex flex-col">
+
+    <header class="max-w-6xl w-full mx-auto px-6 sm:px-10 pt-10 sm:pt-14 border-b border-white/[0.06] pb-6">
+      <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        <span class="text-white/90">Julian Corbet</span>
+        <span>Independent advisor</span>
+        <span class="ml-auto" style="color: var(--green-900)">● corbet.ch</span>
+      </div>
+    </header>
+
+    <section class="max-w-5xl w-full mx-auto px-6 sm:px-10 pt-14 sm:pt-20">
+      <h1
+        class="font-display font-bold leading-[0.95] tracking-[-0.022em] text-[clamp(2rem,7vw,5.5rem)]"
+        style="color: var(--ink)"
+      >
+        The world is changing.
+        <span class="block font-display italic font-medium mt-3 sm:mt-5 text-[clamp(1.1rem,3vw,2rem)]" style="color: var(--green-900)">Looking for a running mate?</span>
+      </h1>
+    </section>
+
+    <section class="max-w-5xl w-full mx-auto px-6 sm:px-10 pt-16 sm:pt-24 pb-16 sm:pb-24">
+      <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500 mb-10">
+        Principles &nbsp;/&nbsp; surfaces
+      </p>
+      <ol class="space-y-10 sm:space-y-14">
+        {live.map((s, i) => (
+          <li class="grid grid-cols-[3rem_1fr] sm:grid-cols-[5rem_1fr] gap-x-4 sm:gap-x-6">
+            <span class="font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.3em]" style="color: var(--green-900)">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <a
+                href={s.status === 'forthcoming' ? undefined : `https://${s.host}`}
+                class="group block"
+              >
+                <h3 class="font-display italic text-[clamp(1.25rem,2.6vw,1.9rem)] leading-tight group-hover:text-white transition-colors" style="color: var(--ink)">
+                  {s.name}
+                </h3>
+                <p class="font-sans text-sm sm:text-[15px] text-neutral-400 mt-2 leading-relaxed">
+                  {s.blurb}
+                </p>
+                <p class="font-mono text-[10px] uppercase tracking-[0.3em] mt-3 text-neutral-500 group-hover:text-neutral-300 transition-colors">
+                  {s.status === 'forthcoming' ? 'forthcoming' : s.host}
+                </p>
+              </a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <footer class="mt-auto border-t border-white/[0.06]">
+      <div class="max-w-6xl mx-auto px-6 sm:px-10 py-5 sm:py-7 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        <span class="text-white/90">corbet.ch · 2026</span>
+        <span class="ml-auto">
+          <a href="mailto:julian@corbet.ch" class="text-neutral-400 hover:text-white transition-colors">
+            julian@corbet.ch
+          </a>
+        </span>
+      </div>
+    </footer>
+
+  </main>
+</Base>

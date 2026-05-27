@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="05 — Paired — corbet.ch" bodyClass="font-sans">
+  <main class="min-h-screen flex flex-col">
+
+    <header class="max-w-6xl w-full mx-auto px-6 sm:px-10 pt-10 sm:pt-14">
+      <p class="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500 flex flex-wrap items-baseline gap-x-3">
+        <span>Julian Corbet</span>
+        <span style="color: var(--neutral-500)">·</span>
+        <span style="color: var(--green-800)">● in conversation</span>
+      </p>
+    </header>
+
+    <section class="flex-1 max-w-5xl w-full mx-auto px-6 sm:px-10 flex flex-col justify-center py-16 sm:py-20">
+      <h1
+        class="font-display font-bold leading-[0.96] tracking-[-0.022em] text-[clamp(2.25rem,8.5vw,7rem)]"
+        style="color: var(--ink)"
+      >
+        The world is changing.
+      </h1>
+      <p
+        class="font-display italic font-medium mt-6 sm:mt-10 leading-[1.15] text-[clamp(1.35rem,4vw,2.75rem)]"
+        style="color: var(--green-800)"
+      >
+        Looking for a running mate?
+      </p>
+
+      <p class="font-sans mt-10 sm:mt-14 max-w-xl text-sm sm:text-base leading-[1.7] text-neutral-300">
+        Same question, two voices. The lead reframes the situation;
+        the echo asks what would help. Counsel for leaders working
+        where neither voice can carry the answer alone.
+      </p>
+    </section>
+
+    <footer class="border-t border-white/[0.06]">
+      <div class="max-w-6xl mx-auto px-6 sm:px-10 py-5 sm:py-7 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        <span class="text-white/90">Independent advisor</span>
+        <span class="ml-auto">
+          <a href="mailto:julian@corbet.ch" class="text-neutral-400 hover:text-white transition-colors">
+            julian@corbet.ch
+          </a>
+        </span>
+      </div>
+    </footer>
+
+  </main>
+</Base>

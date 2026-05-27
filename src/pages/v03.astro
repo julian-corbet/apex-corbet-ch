@@ -1,0 +1,153 @@
+---
+import Base from '../layouts/Base.astro';
+import { services } from '../data/services';
+
+const live = services
+  .filter((s) => s.status === 'live' || s.status === 'forthcoming')
+  .sort((a, b) => a.order - b.order);
+---
+<Base title="03 — Whisper — corbet.ch" bodyClass="font-sans">
+
+  <canvas id="whisper-net" class="fixed inset-0 w-full h-full pointer-events-none opacity-0 transition-opacity duration-[2000ms]"></canvas>
+
+  <main class="relative min-h-screen flex flex-col z-10">
+
+    <header class="max-w-6xl w-full mx-auto px-6 sm:px-10 pt-10 sm:pt-14">
+      <p class="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        Julian Corbet &nbsp;/&nbsp; corbet.ch
+      </p>
+    </header>
+
+    <section class="flex-1 max-w-5xl w-full mx-auto px-6 sm:px-10 flex flex-col justify-center text-center py-20">
+      <h1
+        id="whisper-lead"
+        class="font-display font-bold leading-[0.95] tracking-[-0.022em] text-[clamp(2.5rem,9vw,7.5rem)] opacity-0 transition-opacity duration-[1400ms]"
+        style="color: var(--ink)"
+      >
+        The world is changing.
+      </h1>
+      <p
+        id="whisper-echo"
+        class="font-display italic font-medium mt-6 sm:mt-10 leading-[1.15] text-[clamp(1.4rem,4vw,2.75rem)] opacity-0 transition-opacity duration-[1400ms]"
+        style="color: var(--green-700)"
+      >
+        Looking for a running mate?
+      </p>
+    </section>
+
+    <section class="max-w-5xl w-full mx-auto px-6 sm:px-10 pb-10">
+      <ul class="flex flex-wrap gap-x-8 gap-y-3 justify-center font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        {live.map((s) => (
+          <li>
+            <a
+              href={s.status === 'forthcoming' ? undefined : `https://${s.host}`}
+              class={s.status === 'forthcoming' ? 'opacity-60' : 'hover:text-white transition-colors'}
+            >
+              {s.name}{s.status === 'forthcoming' ? ' · forthcoming' : ''}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <footer class="border-t border-white/[0.06]">
+      <div class="max-w-6xl mx-auto px-6 sm:px-10 py-5 sm:py-7 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        <span class="text-white/90">Independent advisor</span>
+        <span class="ml-auto">
+          <a href="mailto:julian@corbet.ch" class="text-neutral-400 hover:text-white transition-colors">
+            julian@corbet.ch
+          </a>
+        </span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script is:inline>
+    (() => {
+      // Fade in the type after a beat.
+      setTimeout(() => {
+        document.getElementById('whisper-lead')?.classList.remove('opacity-0');
+      }, 250);
+      setTimeout(() => {
+        document.getElementById('whisper-echo')?.classList.remove('opacity-0');
+      }, 900);
+
+      // Particle network — heading-drift wander, edge-wrap, no bouncing.
+      // Adaptive density per BRIEF.
+      const canvas = document.getElementById('whisper-net');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isMobile = window.innerWidth < 700;
+      const N = isMobile ? 50 : window.innerWidth < 1100 ? 95 : 140;
+
+      let W = 0, H = 0;
+      const resize = () => {
+        W = canvas.clientWidth = window.innerWidth;
+        H = canvas.clientHeight = window.innerHeight;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      const particles = Array.from({ length: N }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        heading: Math.random() * Math.PI * 2,
+        speed: 0.12 + Math.random() * 0.15,
+      }));
+
+      const tick = () => {
+        ctx.clearRect(0, 0, W, H);
+
+        // Subtle connection lines.
+        ctx.strokeStyle = 'rgba(244,239,227,0.04)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < particles.length; i++) {
+          const a = particles[i];
+          for (let j = i + 1; j < particles.length; j++) {
+            const b = particles[j];
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < 110 * 110) {
+              ctx.globalAlpha = 1 - Math.sqrt(d2) / 110;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+
+        // Particles themselves.
+        ctx.fillStyle = 'rgba(244,239,227,0.35)';
+        for (const p of particles) {
+          // Heading drift: small random change in angle.
+          p.heading += (Math.random() - 0.5) * 0.08;
+          p.x += Math.cos(p.heading) * p.speed;
+          p.y += Math.sin(p.heading) * p.speed;
+          // Edge-wrap, not bounce.
+          if (p.x < 0) p.x += W;
+          if (p.x > W) p.x -= W;
+          if (p.y < 0) p.y += H;
+          if (p.y > H) p.y -= H;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        requestAnimationFrame(tick);
+      };
+
+      // Reveal the canvas itself just after slogan starts to appear.
+      setTimeout(() => canvas.classList.remove('opacity-0'), 400);
+      tick();
+    })();
+  </script>
+
+</Base>

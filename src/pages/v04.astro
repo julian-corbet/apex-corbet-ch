@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import { services } from '../data/services';
+
+const live = services
+  .filter((s) => s.status === 'live' || s.status === 'forthcoming')
+  .sort((a, b) => a.order - b.order);
+---
+<Base title="04 — Streaming — corbet.ch" bodyClass="font-sans">
+  <main class="min-h-screen flex flex-col">
+
+    <header class="max-w-6xl w-full mx-auto px-6 sm:px-10 pt-10 sm:pt-14">
+      <p class="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        Julian Corbet &nbsp;/&nbsp; corbet.ch
+      </p>
+    </header>
+
+    <section class="flex-1 max-w-5xl w-full mx-auto px-6 sm:px-10 py-20 flex flex-col justify-center">
+      <h1
+        id="stream-lead"
+        class="font-display font-bold leading-[0.95] tracking-[-0.022em] text-[clamp(2.25rem,8vw,7rem)] min-h-[1.05em]"
+        style="color: var(--ink)"
+      ></h1>
+
+      <p
+        id="stream-echo"
+        class="font-display italic font-medium mt-6 sm:mt-10 leading-[1.15] text-[clamp(1.4rem,4vw,2.75rem)] opacity-0 transition-opacity duration-[1200ms] min-h-[1.2em]"
+        style="color: var(--green-800)"
+      ></p>
+
+      <div id="stream-body" class="opacity-0 transition-opacity duration-[1200ms]">
+        <p class="font-sans text-sm sm:text-base leading-[1.7] text-neutral-300 mt-10 sm:mt-14 max-w-xl">
+          Independent advisor at the intersection of strategy and politics.
+        </p>
+
+        <ul class="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4">
+          {live.map((s) => (
+            <li class="border-b border-white/[0.06] pb-3">
+              <a
+                href={s.status === 'forthcoming' ? undefined : `https://${s.host}`}
+                class="group flex flex-wrap items-baseline gap-x-3"
+              >
+                <span class="font-display italic text-lg group-hover:text-white transition-colors" style="color: var(--ink)">
+                  {s.name}
+                </span>
+                <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500 ml-auto group-hover:text-neutral-300 transition-colors">
+                  {s.status === 'forthcoming' ? 'forthcoming' : s.host.replace('.corbet.ch', '')}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <footer class="border-t border-white/[0.06]">
+      <div class="max-w-6xl mx-auto px-6 sm:px-10 py-5 sm:py-7 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        <span class="text-white/90">Independent advisor</span>
+        <span class="ml-auto">
+          <a href="mailto:julian@corbet.ch" class="text-neutral-400 hover:text-white transition-colors">
+            julian@corbet.ch
+          </a>
+        </span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script is:inline>
+    (() => {
+      const lead = document.getElementById('stream-lead');
+      const echo = document.getElementById('stream-echo');
+      const body = document.getElementById('stream-body');
+      if (!lead || !echo || !body) return;
+
+      const slogan = 'The world is changing.';
+      const counter = 'Looking for a running mate?';
+      let i = 0;
+
+      const typeOne = () => {
+        if (i >= slogan.length) {
+          // Counter fades in, then body.
+          echo.textContent = counter;
+          echo.classList.remove('opacity-0');
+          setTimeout(() => body.classList.remove('opacity-0'), 900);
+          return;
+        }
+        lead.textContent = slogan.slice(0, i + 1);
+        const c = slogan[i];
+        i++;
+        // Variable per-character delay: faster mid-word, longer after . , ?
+        let delay = 38 + Math.random() * 22;
+        if (c === ' ') delay = 70;
+        if (c === '.' || c === '?' || c === ',') delay = 320;
+        setTimeout(typeOne, delay);
+      };
+      setTimeout(typeOne, 380);
+    })();
+  </script>
+
+</Base>

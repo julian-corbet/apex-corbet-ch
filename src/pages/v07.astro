@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { services } from '../data/services';
+
+const live = services
+  .filter((s) => s.status === 'live' || s.status === 'forthcoming')
+  .sort((a, b) => a.order - b.order);
+---
+<Base title="07 — Geist only — corbet.ch" bodyClass="font-sans">
+  <main class="min-h-screen flex flex-col">
+
+    <header class="max-w-6xl w-full mx-auto px-6 sm:px-10 pt-10 sm:pt-14">
+      <p class="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        Julian Corbet &nbsp;/&nbsp; corbet.ch
+      </p>
+    </header>
+
+    <section class="flex-1 max-w-5xl w-full mx-auto px-6 sm:px-10 flex flex-col justify-center text-center py-20">
+      <h1
+        class="font-sans font-semibold leading-[0.95] tracking-[-0.04em] text-[clamp(2.5rem,9vw,7rem)]"
+        style="color: var(--ink)"
+      >
+        The world<br />is changing.
+      </h1>
+      <p
+        class="font-mono mt-8 sm:mt-12 uppercase tracking-[0.18em] text-[clamp(0.85rem,2vw,1.1rem)]"
+        style="color: var(--green-700)"
+      >
+        Looking for a running mate?
+      </p>
+    </section>
+
+    <section class="max-w-5xl w-full mx-auto px-6 sm:px-10 pb-12">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 justify-center font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-neutral-500">
+        {live.map((s) => (
+          <li>
+            <a
+              href={s.status === 'forthcoming' ? undefined : `https://${s.host}`}
+              class={s.status === 'forthcoming' ? 'opacity-50' : 'hover:text-white transition-colors'}
+            >
+              {s.host.replace('.corbet.ch', '')}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <footer class="border-t border-white/[0.06]">
+      <div class="max-w-6xl mx-auto px-6 sm:px-10 py-5 sm:py-7 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+        <span class="text-white/90">Independent advisor</span>
+        <span class="ml-auto">
+          <a href="mailto:julian@corbet.ch" class="text-neutral-400 hover:text-white transition-colors">
+            julian@corbet.ch
+          </a>
+        </span>
+      </div>
+    </footer>
+
+  </main>
+</Base>
